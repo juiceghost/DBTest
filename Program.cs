@@ -16,26 +16,47 @@ class Program
         //Console.WriteLine(input);
         //Console.ReadLine();
         // pre-defined monsters
+        /*
         Console.Write("Please enter FirstName: ");
         string firstName = Console.ReadLine();
         Console.Write("Please enter LastName: ");
         string lastName = Console.ReadLine();
         Console.Write("Please enter PinCode: ");
         string pinCode = Console.ReadLine();
-        UserModel newUser = new UserModel
+        BankUserModel newUser = new BankUserModel
         {
-            FirstName = firstName,
-            LastName = lastName,
-            PinCode = pinCode
+            first_name = firstName,
+            last_name = lastName,
+            pin_code = pinCode
         };
-        PostgresDataAccess.SavePerson(newUser);
+        PostgresDataAccess.SaveBankUser(newUser);
+        */
         //Monster[] monsters = new Monster[0];
-        List<UserModel> users = PostgresDataAccess.LoadUsers();
+        List<BankUserModel> users = PostgresDataAccess.LoadBankUsers();
         Console.WriteLine($"users length: {users.Count}");
-        foreach (UserModel user in users)
+        foreach (BankUserModel user in users)
         {
-            Console.WriteLine(user.FullName);
+            Console.WriteLine($"Hello {user.first_name} your pincode is {user.pin_code}");
         }
+        while (true)
+        { 
+        Console.Write("Please enter FirstName: ");
+        string firstName = Console.ReadLine();
+       
+        Console.Write("Please enter PinCode: ");
+        string pinCode = Console.ReadLine();
+            List<BankUserModel> checkedUsers = PostgresDataAccess.CheckLogin(firstName, pinCode);
+            if (checkedUsers.Count < 1)
+            {
+                Console.WriteLine("Login failed, please try again");
+                continue;
+            }
+            foreach (BankUserModel user in checkedUsers)
+            {
+                Console.WriteLine($"Logged in as {user.first_name} your pincode is {user.pin_code}");
+            }
+        }
+
         Monster[] monsters = new Monster[]
         {
             new Monster{
