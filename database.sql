@@ -90,9 +90,6 @@ INSERT INTO "public"."bank_currency" ("name", "exchange_rate") VALUES ('USD', 10
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Administrator', true, false);
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Client', false, true);
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('ClientAdmin', true, true);
-INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Administrator', true, false);
-INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Client', false, true);
-INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('ClientAdmin', true, true);
 INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Krille', 'P', '1234', 2, 1);
 INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Pablo', 'Fransisco P', '4567', 2, 1);
 INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Abbe', 'Något', '1234', 2, 1);

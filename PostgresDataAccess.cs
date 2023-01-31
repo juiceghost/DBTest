@@ -48,6 +48,16 @@ namespace DBTest
             // Returnerar en lista av Users
         }
 
+        public static BankAccountModel GetAccountById(int account_id)
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+                var output = cnn.Query<BankAccountModel>($"SELECT bank_account.*, bank_currency.name AS currency_name, bank_currency.exchange_rate AS currency_exchange_rate FROM bank_account, bank_currency WHERE bank_account.id = '{account_id}' AND bank_account.currency_id = bank_currency.id", new DynamicParameters());
+                //Console.WriteLine(output);
+                return output.ToList().First();
+            }
+        }
+
         public static List<BankAccountModel> GetUserAccounts(int user_id)
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))

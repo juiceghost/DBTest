@@ -48,14 +48,40 @@ class Program
                 Console.WriteLine($"role_id: {user.role_id} branch_id: {user.branch_id}");
                 Console.WriteLine($"is_admin: {user.is_admin} is_client: {user.is_client}");
                 Console.WriteLine($"User account list length: {user.accounts}");
+                Console.WriteLine("\nPlease select an account from the list");
                 if (user.accounts.Count > 0)
                 {
-                    foreach (BankAccountModel account in user.accounts)
+                    List<int> choiceAccountMap = new List<int> { };
+
+                    for (int i = 0; i < user.accounts.Count; i++)
                     {
-                        Console.WriteLine($"ID: {account.id} Account name: {account.name} Balance: {account.balance}");
-                        Console.WriteLine($"Currency: {account.currency_name} Exchange rate: {account.currency_exchange_rate}");
+                        // här vet jag vilken "position" jag är på i menyn
+                        // Lägg till kontots id i Listan
+                        choiceAccountMap.Add(user.accounts[i].id);
+
+                        // [1, 2, 5, 7]
+                        //Console.WriteLine($"i: {i}, accounts[i].id: {user.accounts[i].id}");
+                        //foreach (BankAccountModel account in user.accounts)
+                        //{
+                        Console.WriteLine($"\n{i + 1}. ID: {user.accounts[i].id} Account name: {user.accounts[i].name} Balance: {user.accounts[i].balance}");
+                        //Console.WriteLine($"Currency: {account.currency_name} Exchange rate: {account.currency_exchange_rate}");
                     }
+                    string choice = Console.ReadLine();
+                    Console.WriteLine($"You chose selection number {choice}");
+                    // choice är en sträng, och ett högre än det sanna värdet (indexet i choiceAccontMap)
+
+                    // titta i userChoiceMap på index int(choice) - 1
+                    // plocka ut det värdet som är en int redan, detta är ditt ID
+
+                    // konvertera choice till en int, dra bort 1
+                    int choiceNumber = int.Parse(choice) - 1;
+
+                    int userAccountID = choiceAccountMap[choiceNumber];
+                    BankAccountModel chosenAccount = PostgresDataAccess.GetAccountById(userAccountID);
+
+                    Console.WriteLine($"Account chosen is: {chosenAccount.id}: {chosenAccount.name}");
                 }
+
 
             }
         }
