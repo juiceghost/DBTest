@@ -1,13 +1,46 @@
 ﻿using System;
 using System.Configuration;
 using System.Data;
+using System.Globalization;
 using Dapper;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace DBTest
 {
     public class PostgresDataAccess
     {
+        public static bool TransferMoney(int user_id, int from_account_id, int to_account_id, decimal amount)
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+                string newAmount = amount.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+                try
+                {
+
+                var output = cnn.Query($@"
+                    UPDATE bank_account SET balance = CASE
+                       WHEN id = {from_account_id} AND balance >= '{newAmount}' THEN balance - '{newAmount}'
+                       WHEN id = {to_account_id} THEN balance + '{newAmount}'
+                    END
+                    WHERE id IN ({from_account_id}, {to_account_id})", new DynamicParameters());
+                    //Console.WriteLine(output);
+                }
+                catch (Npgsql.PostgresException e)
+                {
+                    //Console.WriteLine("Insufficient balance");
+                    //Console.WriteLine(e.ErrorCode);
+                    //Console.WriteLine(e.MessageText);
+                    return false;
+                }
+                return true;
+
+            }
+            // Kopplar upp mot DB:n
+            // läser ut alla Users
+            // Returnerar en lista av Users
+        }
+
         public static List<BankUserModel> OldLoadBankUsers()
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))

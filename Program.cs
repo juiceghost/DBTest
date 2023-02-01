@@ -41,6 +41,14 @@ class Program
                 Console.WriteLine("Login failed, please try again");
                 continue;
             }
+            bool success = Helper.SingleUserTransaction();
+            if (success)
+            {
+                Console.WriteLine("Transaction complete");
+            } else
+            {
+                Console.WriteLine("Transaction failed. Insufficient balance.");
+            }
             foreach (BankUserModel user in checkedUsers)
             {
                 // när raden nedan körs, vad händer?
@@ -51,6 +59,12 @@ class Program
                 Console.WriteLine($"is_admin: {user.is_admin} is_client: {user.is_client}");
                 Console.WriteLine($"User account list length: {tempAccounts}");
                 Console.WriteLine("\nPlease select an account from the list");
+                
+
+                //users.account[0].balance = users.account[0].balance - 100
+                //users.account[1].balance = users.account[1].balance + 100
+
+
                 if (user.accounts.Count > 0)
                 {
                     List<int> choiceAccountMap = new List<int> { };
