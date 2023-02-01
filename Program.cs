@@ -43,27 +43,29 @@ class Program
             }
             foreach (BankUserModel user in checkedUsers)
             {
-                user.accounts = PostgresDataAccess.GetUserAccounts(user.id);
+                // när raden nedan körs, vad händer?
+                //user.accounts = PostgresDataAccess.GetUserAccounts(user.id);
+                List<BankAccountModel> tempAccounts = user.accounts;
                 Console.WriteLine($"Logged in as {user.first_name} your pincode is {user.pin_code} and the id is {user.id}");
                 Console.WriteLine($"role_id: {user.role_id} branch_id: {user.branch_id}");
                 Console.WriteLine($"is_admin: {user.is_admin} is_client: {user.is_client}");
-                Console.WriteLine($"User account list length: {user.accounts}");
+                Console.WriteLine($"User account list length: {tempAccounts}");
                 Console.WriteLine("\nPlease select an account from the list");
                 if (user.accounts.Count > 0)
                 {
                     List<int> choiceAccountMap = new List<int> { };
 
-                    for (int i = 0; i < user.accounts.Count; i++)
+                    for (int i = 0; i < tempAccounts.Count; i++)
                     {
                         // här vet jag vilken "position" jag är på i menyn
                         // Lägg till kontots id i Listan
-                        choiceAccountMap.Add(user.accounts[i].id);
+                        choiceAccountMap.Add(tempAccounts[i].id);
 
                         // [1, 2, 5, 7]
                         //Console.WriteLine($"i: {i}, accounts[i].id: {user.accounts[i].id}");
                         //foreach (BankAccountModel account in user.accounts)
                         //{
-                        Console.WriteLine($"\n{i + 1}. ID: {user.accounts[i].id} Account name: {user.accounts[i].name} Balance: {user.accounts[i].balance}");
+                        Console.WriteLine($"\n{i + 1}. ID: {tempAccounts[i].id} Account name: {tempAccounts[i].name} Balance: {tempAccounts[i].balance}");
                         //Console.WriteLine($"Currency: {account.currency_name} Exchange rate: {account.currency_exchange_rate}");
                     }
                     string choice = Console.ReadLine();

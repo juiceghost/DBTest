@@ -58,10 +58,12 @@ CREATE TABLE "public"."bank_user" (
   "id" SERIAL,
   "first_name" VARCHAR(20) NOT NULL,
   "last_name" VARCHAR(20) NOT NULL,
+  "email" VARCHAR(50) NOT NULL,
   "pin_code" VARCHAR(4) NOT NULL,
   "role_id" INTEGER NULL,
   "branch_id" INTEGER NULL,
-  CONSTRAINT "bank_user_pkey" PRIMARY KEY ("id")
+  CONSTRAINT "bank_user_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "unique_email" UNIQUE ("email")
 );
 ALTER TABLE "public"."bank_account" DISABLE TRIGGER ALL;
 ALTER TABLE "public"."bank_branch" DISABLE TRIGGER ALL;
@@ -90,14 +92,8 @@ INSERT INTO "public"."bank_currency" ("name", "exchange_rate") VALUES ('USD', 10
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Administrator', true, false);
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Client', false, true);
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('ClientAdmin', true, true);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Krille', 'P', '1234', 2, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Pablo', 'Fransisco P', '4567', 2, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Abbe', 'Något', '1234', 2, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Krille', 'P', '1234', 2, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Pablo', 'Fransisco P', '4567', 2, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Abbe', 'Något', '1234', 2, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Bobby', 'Olsson', '9999', 1, 1);
-INSERT INTO "public"."bank_user" ("first_name", "last_name", "pin_code", "role_id", "branch_id") VALUES ('Saga', 'Olsson', '1234', 1, 1);
+INSERT INTO "public"."bank_user" ("first_name", "last_name", "email", "pin_code", "role_id", "branch_id") VALUES ('Krille', 'P', 'krille@hej.se', '1234', 2, 1);
+INSERT INTO "public"."bank_user" ("first_name", "last_name", "email", "pin_code", "role_id", "branch_id") VALUES ('Pablo', 'Fransisco P', 'pablo@nej.se', '4567', 2, 1);
 ALTER TABLE "public"."bank_account" ENABLE TRIGGER ALL;
 ALTER TABLE "public"."bank_branch" ENABLE TRIGGER ALL;
 ALTER TABLE "public"."bank_currency" ENABLE TRIGGER ALL;
