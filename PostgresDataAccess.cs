@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using Dapper;
+using Microsoft.VisualBasic;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -10,6 +11,23 @@ namespace DBTest
 {
     public class PostgresDataAccess
     {
+        public static List<BankTransactionModel> GetTransactionByAccountId(int account_id)
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+
+                var output = cnn.Query<BankTransactionModel>($"SELECT * FROM bank_transaction WHERE from_account_id = {account_id} OR to_account_id = {account_id} ORDER BY timestamp DESC", new DynamicParameters());
+                //Console.WriteLine(output);
+                return output.ToList();
+            }
+            // denna funktion ska leta upp användarens konton från databas och returnera dessa som en lista
+            // vad behöver denna funktion för information för att veta vems konto den ska hämta
+            // vad har den för information att tillgå?
+            // vilken typ av sql-query bör vi använda, INSERT, UPDATE eller SELECT?
+            // ...?
+
+        }
+
         public static bool TransferMoney(int user_id, int from_account_id, int to_account_id, decimal amount)
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
@@ -19,11 +37,16 @@ namespace DBTest
                 {
 
                 var output = cnn.Query($@"
+                    BEGIN TRANSACTION;
                     UPDATE bank_account SET balance = CASE
                        WHEN id = {from_account_id} AND balance >= '{newAmount}' THEN balance - '{newAmount}'
                        WHEN id = {to_account_id} THEN balance + '{newAmount}'
                     END
-                    WHERE id IN ({from_account_id}, {to_account_id})", new DynamicParameters());
+                    WHERE id IN ({from_account_id}, {to_account_id});
+                    INSERT INTO bank_transaction (name, from_account_id, to_account_id, amount) VALUES ('Överföring', {from_account_id}, {to_account_id}, '{newAmount}');
+                    COMMIT;
+                ", new DynamicParameters());
+
                     //Console.WriteLine(output);
                 }
                 catch (Npgsql.PostgresException e)

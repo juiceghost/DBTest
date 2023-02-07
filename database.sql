@@ -1,5 +1,5 @@
-﻿ALTER TABLE "public"."bank_transaction" DROP CONSTRAINT "fkey_transaction_to_account";
-ALTER TABLE "public"."bank_transaction" DROP CONSTRAINT "fkey_transaction_from_account";
+﻿ALTER TABLE "public"."bank_transaction" DROP CONSTRAINT "fkey_transaction_from_account";
+ALTER TABLE "public"."bank_transaction" DROP CONSTRAINT "fkey_transaction_to_account";
 ALTER TABLE "public"."bank_user" DROP CONSTRAINT "fk_user_branch";
 ALTER TABLE "public"."bank_account" DROP CONSTRAINT "fk_account_currency";
 ALTER TABLE "public"."bank_user" DROP CONSTRAINT "fk_user_role";
@@ -49,9 +49,10 @@ CREATE TABLE "public"."bank_role" (
 CREATE TABLE "public"."bank_transaction" ( 
   "id" SERIAL,
   "name" VARCHAR(30) NOT NULL,
-  "from_account_id" INTEGER NOT NULL,
+  "from_account_id" INTEGER NULL,
   "to_account_id" INTEGER NULL,
   "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now() ,
+  "amount" NUMERIC NOT NULL,
   CONSTRAINT "bank_transaction_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."bank_user" ( 
@@ -65,13 +66,6 @@ CREATE TABLE "public"."bank_user" (
   CONSTRAINT "bank_user_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "unique_email" UNIQUE ("email")
 );
-ALTER TABLE "public"."bank_account" DISABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_branch" DISABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_currency" DISABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_loan" DISABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_role" DISABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_transaction" DISABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_user" DISABLE TRIGGER ALL;
 INSERT INTO "public"."bank_account" ("name", "interest_rate", "user_id", "currency_id", "balance") VALUES ('Lönekonto', '0', 1, 1, '0');
 INSERT INTO "public"."bank_account" ("name", "interest_rate", "user_id", "currency_id", "balance") VALUES ('Sparkonto', '1.50', 1, 1, '2000');
 INSERT INTO "public"."bank_account" ("name", "interest_rate", "user_id", "currency_id", "balance") VALUES ('Lönekonto', '0', 2, 1, '1000');
@@ -92,19 +86,16 @@ INSERT INTO "public"."bank_currency" ("name", "exchange_rate") VALUES ('USD', 10
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Administrator', true, false);
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('Client', false, true);
 INSERT INTO "public"."bank_role" ("name", "is_admin", "is_client") VALUES ('ClientAdmin', true, true);
+INSERT INTO "public"."bank_transaction" ("name", "from_account_id", "to_account_id", "timestamp", "amount") VALUES ('Överföring', 7, 2, '2023-02-07 10:27:25.958896+01', '1100.00');
+INSERT INTO "public"."bank_transaction" ("name", "from_account_id", "to_account_id", "timestamp", "amount") VALUES ('Överföring', 7, 2, '2023-02-07 10:27:36.051976+01', '1100.00');
+INSERT INTO "public"."bank_transaction" ("name", "from_account_id", "to_account_id", "timestamp", "amount") VALUES ('Överföring', 2, 7, '2023-02-07 10:28:23.190591+01', '500.00');
+INSERT INTO "public"."bank_transaction" ("name", "from_account_id", "to_account_id", "timestamp", "amount") VALUES ('Överföring', 7, 2, '2023-02-07 10:55:06.900233+01', '1300.00');
 INSERT INTO "public"."bank_user" ("first_name", "last_name", "email", "pin_code", "role_id", "branch_id") VALUES ('Krille', 'P', 'krille@hej.se', '1234', 2, 1);
 INSERT INTO "public"."bank_user" ("first_name", "last_name", "email", "pin_code", "role_id", "branch_id") VALUES ('Pablo', 'Fransisco P', 'pablo@nej.se', '4567', 2, 1);
-ALTER TABLE "public"."bank_account" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_branch" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_currency" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_loan" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_role" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_transaction" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_user" ENABLE TRIGGER ALL;
-ALTER TABLE "public"."bank_account" ADD CONSTRAINT "fk_account_user" FOREIGN KEY ("user_id") REFERENCES "public"."bank_user" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE "public"."bank_account" ADD CONSTRAINT "fk_account_currency" FOREIGN KEY ("currency_id") REFERENCES "public"."bank_currency" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."bank_account" ADD CONSTRAINT "fk_account_user" FOREIGN KEY ("user_id") REFERENCES "public"."bank_user" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE "public"."bank_loan" ADD CONSTRAINT "fkey_loan_user" FOREIGN KEY ("user_id") REFERENCES "public"."bank_user" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-ALTER TABLE "public"."bank_transaction" ADD CONSTRAINT "fkey_transaction_to_account" FOREIGN KEY ("to_account_id") REFERENCES "public"."bank_account" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE "public"."bank_transaction" ADD CONSTRAINT "fkey_transaction_from_account" FOREIGN KEY ("from_account_id") REFERENCES "public"."bank_account" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-ALTER TABLE "public"."bank_user" ADD CONSTRAINT "fk_user_role" FOREIGN KEY ("role_id") REFERENCES "public"."bank_role" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."bank_transaction" ADD CONSTRAINT "fkey_transaction_to_account" FOREIGN KEY ("to_account_id") REFERENCES "public"."bank_account" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE "public"."bank_user" ADD CONSTRAINT "fk_user_branch" FOREIGN KEY ("branch_id") REFERENCES "public"."bank_branch" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."bank_user" ADD CONSTRAINT "fk_user_role" FOREIGN KEY ("role_id") REFERENCES "public"."bank_role" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;

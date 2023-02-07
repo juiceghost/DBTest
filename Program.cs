@@ -41,6 +41,7 @@ class Program
                 Console.WriteLine("Login failed, please try again");
                 continue;
             }
+            /*
             bool success = Helper.SingleUserTransaction();
             if (success)
             {
@@ -48,7 +49,7 @@ class Program
             } else
             {
                 Console.WriteLine("Transaction failed. Insufficient balance.");
-            }
+            }*/
             foreach (BankUserModel user in checkedUsers)
             {
                 // när raden nedan körs, vad händer?
@@ -73,6 +74,10 @@ class Program
                         //foreach (BankAccountModel account in user.accounts)
                         //{
                         Console.WriteLine($"\n{i + 1}. ID: {user.accounts[i].id} Account name: {user.accounts[i].name} Balance: {user.accounts[i].balance}");
+                        for (int j = 0; j < user.accounts[i].GetTransactionsByAccountId(user.accounts[i].id).Count; j++)
+                        {
+                            Console.WriteLine($" acct_id:{user.accounts[i].id} {user.accounts[i].transactions[j].name}: {user.accounts[i].transactions[j].GetSignedAmount(user.accounts[i].id)}");
+                        }
                         //Console.WriteLine($"Currency: {account.currency_name} Exchange rate: {account.currency_exchange_rate}");
                     }
                     string choice = Console.ReadLine();

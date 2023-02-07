@@ -38,11 +38,6 @@ namespace DBTest
             }
 			return accounts;
         }
-
-
-
-        
-
     }
 }
 
