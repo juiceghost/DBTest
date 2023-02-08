@@ -62,23 +62,16 @@ class Program
                 
                 if (user.accounts.Count > 0)
                 {
-                    
-
                     for (int i = 0; i < user.accounts.Count; i++)
                     {
-                        // här vet jag vilken "position" jag är på i menyn
-                        // Lägg till kontots id i Listan
-                        //Console.ReadLine();
-                        // [1, 2, 5, 7]
-                        //Console.WriteLine($"i: {i}, accounts[i].id: {user.accounts[i].id}");
-                        //foreach (BankAccountModel account in user.accounts)
-                        //{
-                        Console.WriteLine($"\n{i + 1}. ID: {user.accounts[i].id} Account name: {user.accounts[i].name} Balance: {user.accounts[i].balance}");
-                        for (int j = 0; j < user.accounts[i].GetTransactionsByAccountId(user.accounts[i].id).Count; j++)
+                        var currA = user.accounts[i];
+                        Console.WriteLine($"\n{i + 1}. ID: {currA.id} Account name: {currA.name} Balance: {currA.balance}");
+                        currA.GetTransactionsByAccountId(currA.id).ForEach(currT =>
                         {
-                            Console.WriteLine($" acct_id:{user.accounts[i].id} {user.accounts[i].transactions[j].name}: {user.accounts[i].transactions[j].GetSignedAmount(user.accounts[i].id)}");
-                        }
-                        //Console.WriteLine($"Currency: {account.currency_name} Exchange rate: {account.currency_exchange_rate}");
+                            var accountString = currT.to_account_id == currA.id ? $"{currT.name} från konto {currT.from_account_id} " : $"{currT.name} till konto {currT.to_account_id} ";
+                            Console.WriteLine($" {accountString}: {currT.GetSignedAmount(currA.id)}");
+                        });
+                        
                     }
                     string choice = Console.ReadLine();
                     Console.WriteLine($"You chose selection number {choice}");
