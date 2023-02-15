@@ -11,7 +11,18 @@ namespace DBTest
 {
     public class PostgresDataAccess
     {
-        public static List<BankTransactionModel> GetTransactionByAccountId(int account_id)
+        public static List<BankCurrencyModel> GetExchangeRates()
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+
+                var output = cnn.Query<BankCurrencyModel>($"SELECT * FROM bank_currency", new DynamicParameters());
+                //Console.WriteLine(output);
+                return output.ToList();
+            }
+        }
+
+            public static List<BankTransactionModel> GetTransactionByAccountId(int account_id)
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
             {
@@ -39,7 +50,7 @@ namespace DBTest
                 var output = cnn.Query($@"
                     BEGIN TRANSACTION;
                     UPDATE bank_account SET balance = CASE
-                       WHEN id = {from_account_id} AND balance >= '{newAmount}' THEN balance - '{newAmount}'
+                       WHEN id = {from_account_id} AND '{newAmount}' > 0 AND balance >= '{newAmount}' THEN balance - '{newAmount}'
                        WHEN id = {to_account_id} THEN balance + '{newAmount}'
                     END
                     WHERE id IN ({from_account_id}, {to_account_id});

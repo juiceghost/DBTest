@@ -59,13 +59,29 @@ class Program
                 Console.WriteLine($"is_admin: {user.is_admin} is_client: {user.is_client}");
                 Console.WriteLine($"User account list length: {user.GetAccounts().Count}");
                 Console.WriteLine("\nPlease select an account from the list");
-                
+
+                decimal maxLoanAmount = 0; // After this loop is finished, this variable should contain the sum of all balances of all user accounts
+                // in SEK, for example: Account 1 has 1000 SEK, account 2 has 100 USD. let's say 1 USD = 10 SEK.
+                // Max loan amount is 1000 + (100 * 10) = 2000. User is allowed to borrow 5 times total value of accounts. 2000 * 5 = 10000.
+                // max loan amount is 10000 SEK or 1000 USD
+                // maxLoanAmount is the amount in SEK
+
                 if (user.accounts.Count > 0)
                 {
                     for (int i = 0; i < user.accounts.Count; i++)
                     {
                         var currA = user.accounts[i];
-                        Console.WriteLine($"\n{i + 1}. ID: {currA.id} Account name: {currA.name} Balance: {currA.balance}");
+                        Console.Write($"\n{i + 1}. ID: {currA.id} Account name: {currA.name} Balance: {currA.balance} {currA.currency_name} ");
+                        if (currA.currency_name != "SEK")
+                        {
+                            Console.Write($"(Value in SEK: {currA.balance * (decimal)currA.currency_exchange_rate})");
+                            maxLoanAmount = maxLoanAmount + currA.balance * (decimal)currA.currency_exchange_rate;
+                        }
+                        else
+                        {
+                            maxLoanAmount = maxLoanAmount + currA.balance;
+                        }
+                        Console.Write("\n");
                         currA.GetTransactionsByAccountId(currA.id).ForEach(currT =>
                         {
                             var accountString = currT.to_account_id == currA.id ? $"{currT.name} från konto {currT.from_account_id} " : $"{currT.name} till konto {currT.to_account_id} ";
@@ -73,6 +89,11 @@ class Program
                         });
                         
                     }
+                    maxLoanAmount = maxLoanAmount * 5;
+                    var maxLoanEUR = Helper.ConvertCurrency(maxLoanAmount, "EUR");
+                    var maxLoanUSD = Helper.ConvertCurrency(maxLoanAmount, "USD");
+                    Console.WriteLine($"You are allowed to borrow {maxLoanAmount} SEK, {maxLoanEUR} EUR, {maxLoanUSD} USD");
+                    //Console.WriteLine(Helper.ConvertCurrency(100, "EUR"));
                     string choice = Console.ReadLine();
                     Console.WriteLine($"You chose selection number {choice}");
                     // choice är en sträng, och ett högre än det sanna värdet (indexet i choiceAccontMap)
