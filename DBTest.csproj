@@ -12,10 +12,12 @@
     <None Remove="System.Data.SQLite" />
     <None Remove="System.Configuration.ConfigurationManager" />
     <None Remove="Npgsql" />
+    <None Remove="Microsoft.AspNet.WebApi.Client" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
     <PackageReference Include="Npgsql" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
   </ItemGroup>
 </Project>

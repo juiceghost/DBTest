@@ -2,7 +2,7 @@
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
 
         /*
@@ -20,6 +20,29 @@ class Program
         };
         PostgresDataAccess.SaveBankUser(newUser);
         */
+        ApiHelper.InitializeClient();
+
+        /*
+         * public DateTime Sunrise { get; set; }
+        public DateTime Sunset { get; set; }
+        */
+        SunModel SunriseSunset = await SunProcessor.LoadSunInformation();
+
+        
+        Console.WriteLine($"Today the sun rose at {SunriseSunset.Sunrise.ToLocalTime()} and will set at {SunriseSunset.Sunset.ToLocalTime()}");
+        Console.WriteLine($"Today is {SunriseSunset.Day_Length.Hours.ToString()} hours long");
+        Console.ReadLine();
+
+
+        SunModel TestSun = new SunModel
+        {
+            Sunrise = DateTime.Parse("7:42:42 AM"),
+            Sunset = DateTime.Parse("8:12:12 PM"),
+            Day_Length = TimeSpan.Parse("05:05:05")
+        };
+        Console.WriteLine($"Today the sun rose at {TestSun.Sunrise} and will set at {TestSun.Sunset}");
+        Console.WriteLine($"Today is {TestSun.Day_Length.Hours.ToString()} hours long");
+        Console.ReadLine();
 
         List<BankUserModel> users = PostgresDataAccess.LoadBankUsers();
         Console.WriteLine($"users length: {users.Count}");
@@ -50,7 +73,7 @@ class Program
             {
                 Console.WriteLine("Transaction failed. Insufficient balance.");
             }*/
-            foreach (BankUserModel user in checkedUsers)
+        foreach (BankUserModel user in checkedUsers)
             {
                 // när raden nedan körs, vad händer?
 
